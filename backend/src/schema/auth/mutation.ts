@@ -1,5 +1,5 @@
 import { prisma } from '../../lib/prisma.js'
-import type { Context } from '../../types/types.js'
+import { type Context, Role } from '../../types/types.js'
 import { GraphQLError } from 'graphql/index.js'
 import { signAccessToken, signRefreshToken } from '../../auth/tokens.js'
 import bcrypt from 'bcrypt'
@@ -15,6 +15,7 @@ import { sendMail } from '../../mail/sendMail.js'
 import { resetPasswordTemplate } from '../../mail/templates/resetPassword.js'
 import { welcomeTemplate } from '../../mail/templates/welcome.js'
 import { passwordError } from '../user/types.js'
+import { requireAuth } from '../../auth/requireAuth.js'
 
 export const Mutation = {
   bootstrapAdmin: async (
@@ -383,6 +384,9 @@ export const Mutation = {
   ) => {
     const email = args.email.trim().toLowerCase()
 
+    // 0) Check Count of User (0 = "ROLE_ADMIN")
+    const totalCount = await ctx.prisma.user.count()
+
     // 1) Check exists
     const existing = await ctx.prisma.user.findUnique({ where: { email } })
     if (existing) {
@@ -405,7 +409,8 @@ export const Mutation = {
         firstName: args.firstName,
         lastName: args.lastName,
         displayName: getUserDisplayName(args),
-        emailVerified: false,
+        emailVerified: true,
+        role: totalCount === 0 ? Role.ADMIN : Role.USER,
       },
     })
 
@@ -555,5 +560,111 @@ export const Mutation = {
     })
 
     return true
+  },
+
+  deleteAccount: async (
+    _: unknown,
+    args: { email: string; password: string },
+    ctx: Context,
+  ) => {
+    // 🔐 Auth Pflicht
+    requireAuth(ctx)
+
+    const email = args.email.toLowerCase().trim()
+
+    // 👤 User laden (nur eigenes Konto!)
+    const user = await ctx.prisma.user.findUnique({
+      where: { id: ctx.user!.id },
+    })
+
+    if (!user) {
+      throw new GraphQLError('Benutzer nicht gefunden', {
+        extensions: { code: 'NOT_FOUND' },
+      })
+    }
+
+    // 🔒 Extra-Schutz: E-Mail muss übereinstimmen
+    if (user.email.toLowerCase() !== email) {
+      throw new GraphQLError('E-Mail stimmt nicht überein', {
+        extensions: { code: 'BAD_USER_INPUT' },
+      })
+    }
+
+    // 🔑 Passwort prüfen
+    const isValidPassword = await bcrypt.compare(args.password, user.password)
+
+    if (!isValidPassword) {
+      throw new GraphQLError('Ungültiges Kennwort', {
+        extensions: { code: 'BAD_USER_INPUT' },
+      })
+    }
+
+    // 🧨 ACCOUNT LÖSCHEN (CASCADE)
+    // Voraussetzung im Prisma-Schema:
+    // Tabs -> Groups -> Items mit onDelete: Cascade
+    await ctx.prisma.user.delete({
+      where: { id: user.id },
+    })
+
+    // 🧼 Optional: Tokens / Sessions invalidieren
+    await ctx.prisma.refreshToken.deleteMany({
+      where: { userId: user.id },
+    })
+
+    // 🍃 Cookies / Session entfernen (falls vorhanden)
+    if (ctx.res) {
+      ctx.res.clearCookie('accessToken')
+      ctx.res.clearCookie('refreshToken')
+    }
+
+    return true
+  },
+
+  requestDataExport: async (_: unknown, __: unknown, ctx: Context) => {
+    requireAuth(ctx)
+
+    const userId = ctx.user!.id
+
+    const user = await ctx.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        tabs: {
+          include: {
+            groups: {
+              include: {
+                items: {
+                  include: {
+                    tags: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    })
+
+    if (!user) {
+      throw new GraphQLError('User nicht gefunden')
+    }
+
+    // 🔐 Sensible Felder entfernen
+    const exportData = {
+      user: {
+        id: user.id,
+        email: user.email,
+        createdAt: user.createdAt,
+      },
+      tabs: user.tabs,
+    }
+
+    const json = JSON.stringify(exportData, null, 2)
+    const buffer = Buffer.from(json, 'utf-8')
+
+    return {
+      filename: `bookmark-export-${user.id}.json`,
+      mimeType: 'application/json',
+      contentBase64: buffer.toString('base64'),
+    }
   },
 }

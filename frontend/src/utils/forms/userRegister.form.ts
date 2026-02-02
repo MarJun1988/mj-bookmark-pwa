@@ -36,6 +36,9 @@ export const userRegisterFormFields: FormField<User>[] = [
     type: "password",
     required: () => true,
     class: "col-span-12 md:col-span-6",
+    componentProps: {
+      feedback: false,
+    },
   },
   {
     name: "passwordReplay",
@@ -43,5 +46,8 @@ export const userRegisterFormFields: FormField<User>[] = [
     type: "password",
     required: () => true,
     class: "col-span-12 md:col-span-6",
+    componentProps: {
+      feedback: false,
+    },
   },
 ];

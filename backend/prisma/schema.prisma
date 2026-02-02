@@ -70,7 +70,7 @@ model Tab {
   order Int
 
   userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Restrict)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   groups Group[]
 

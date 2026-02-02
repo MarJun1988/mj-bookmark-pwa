@@ -298,123 +298,58 @@ deploy_to_dev_system_lxc:
       EOF
   tags:
     - docker
-#deploy_to_prod_system_lxc:
-#  stage: deploy
-#  image: docker:24
-#  rules:
-#    - if: '$CI_COMMIT_BRANCH == "developer"'
-#  script:
-#    - echo "DEV_USER=$PROD_LXC_SYSTEM_USER"
-#    - echo "DEV_HOST=$PROD_LXC_SYSTEM_HOST"
-#    - echo "$PROD_LXC_SYSTEM_SSH_PRIVATE_KEY" | tr -d '\r' > /tmp/key.pem
-#    - chmod 600 /tmp/key.pem
-#    - |
-#      ssh -o StrictHostKeyChecking=no -i /tmp/key.pem $PROD_LXC_SYSTEM_USER@$PROD_LXC_SYSTEM_HOST << 'EOF'
-#        cd /opt/fw-operation-display &&
-#        echo "Pull git"
-#        git pull
-#
-#        docker compose -f docker-compose.prod.yml pull &&
-#        docker compose -f docker-compose.prod.yml up -d --build
-#
-#        echo "⏳ Waiting for containers to become healthy..."
-#
-#        for i in {1..30}; do
-#          unhealthy=$(docker ps --filter "health=unhealthy" --format "{{.Names}}")
-#          starting=$(docker ps --filter "health=starting" --format "{{.Names}}")
-#
-#          if [ -z "$unhealthy" ] && [ -z "$starting" ]; then
-#            echo "✅ All containers are healthy"
-#            exit 0
-#          fi
-#
-#          echo "Waiting... ($i/30)"
-#          sleep 5
-#        done
-#
-#        echo "❌ Containers did not become healthy in time"
-#        docker ps
-#        exit 1
-#      EOF
-#  tags:
-#    - docker
-#
-#deploy_to_prod_ndw_system_raspberry:
-#  stage: deploy
-#  image: docker:24
-#  only:
-#    - tags
-#  script:
-#    - echo "$PROD_NDW_RASPBERRY_SYSTEM_SSH_PRIVATE_KEY" | tr -d '\r' > /tmp/key.pem
-#    - chmod 600 /tmp/key.pem
-#    - |
-#      ssh -o StrictHostKeyChecking=no -i /tmp/key.pem $PROD_NDW_RASPBERRY_SYSTEM_USER@$PROD_NDW_RASPBERRY_SYSTEM_HOST << 'EOF'
-#        cd /opt/fw-operation-display &&
-#
-#        echo "Pull git"
-#        git pull
-#
-#        docker compose -f docker-compose.prod.yml pull &&
-#        docker compose -f docker-compose.prod.yml up -d --build
-#
-#        echo "⏳ Waiting for containers to become healthy..."
-#
-#        for i in {1..30}; do
-#          unhealthy=$(docker ps --filter "health=unhealthy" --format "{{.Names}}")
-#          starting=$(docker ps --filter "health=starting" --format "{{.Names}}")
-#
-#          if [ -z "$unhealthy" ] && [ -z "$starting" ]; then
-#            echo "✅ All containers are healthy"
-#            exit 0
-#          fi
-#
-#          echo "Waiting... ($i/30)"
-#          sleep 10
-#        done
-#
-#        echo "❌ Containers did not become healthy in time"
-#        docker ps
-#        exit 1
-#      EOF
-#  tags:
-#    - docker
-#
-#deploy_to_prod_liwa_system_raspberry:
-#  stage: deploy
-#  image: docker:24
-#  only:
-#    - tags
-#  script:
-#    - echo "$PROD_LIWA_RASPBERRY_SYSTEM_SSH_PRIVATE_KEY" | tr -d '\r' > /tmp/key.pem
-#    - chmod 600 /tmp/key.pem
-#    - |
-#      ssh -o StrictHostKeyChecking=no -i /tmp/key.pem $PROD_LIWA_RASPBERRY_SYSTEM_USER@$PROD_LIWA_RASPBERRY_SYSTEM_HOST << 'EOF'
-#        cd /opt/fw-operation-display &&
-#
-#        echo "Pull git"
-#        git pull
-#
-#        docker compose -f docker-compose.prod.yml pull &&
-#        docker compose -f docker-compose.prod.yml up -d --build
-#
-#        echo "⏳ Waiting for containers to become healthy..."
-#
-#        for i in {1..30}; do
-#          unhealthy=$(docker ps --filter "health=unhealthy" --format "{{.Names}}")
-#          starting=$(docker ps --filter "health=starting" --format "{{.Names}}")
-#
-#          if [ -z "$unhealthy" ] && [ -z "$starting" ]; then
-#            echo "✅ All containers are healthy"
-#            exit 0
-#          fi
-#
-#          echo "Waiting... ($i/30)"
-#          sleep 10
-#        done
-#
-#        echo "❌ Containers did not become healthy in time"
-#        docker ps
-#        exit 1
-#      EOF
-#  tags:
-#    - docker
+
+deploy_to_prod_system_lxc_dresden:
+  stage: deploy
+  image: docker:24
+  only:
+    - tags
+  script:
+    - echo "$PROD_SYSTEM_LXC_SSH_PRIVATE_KEY" | tr -d '\r' > /tmp/key.pem
+    - chmod 600 /tmp/key.pem
+    - |
+      ssh -o StrictHostKeyChecking=no -i /tmp/key.pem \
+      $PROD_SYSTEM_LXC_USER@$PROD_LXC_SYSTEM_HOST \
+      "CI_BRANCH=$CI_COMMIT_REF_NAME bash -s" << 'EOF'
+       set -e
+      
+       echo "Remove Unsesed Containers"
+       docker system prune -f
+
+       cd /opt/mj-bookmark-pwa
+
+       echo "📦 Fetch all branches"
+       git fetch origin
+
+       echo "🔀 Checkout branch: $CI_BRANCH"
+       git checkout "$CI_BRANCH" || git checkout -b "$CI_BRANCH" "origin/$CI_BRANCH"
+
+       echo "⬇️ Pull latest changes"
+       git pull origin "$CI_BRANCH"
+
+       echo "🐳 Pull images"
+       docker compose -f docker-compose.prod.yml pull
+
+       echo "🚀 Start containers"
+       docker compose -f docker-compose.prod.yml up -d
+
+       echo "⏳ Waiting for containers to become healthy..."
+       for i in {1..30}; do
+         unhealthy=$(docker ps --filter "health=unhealthy" --format "{{.Names}}")
+         starting=$(docker ps --filter "health=starting" --format "{{.Names}}")
+
+         if [ -z "$unhealthy" ] && [ -z "$starting" ]; then
+           echo "✅ All containers are healthy"
+           exit 0
+         fi
+
+         echo "Waiting... ($i/30)"
+         sleep 5
+       done
+
+       echo "❌ Containers did not become healthy in time"
+       docker ps
+       exit 1
+      EOF
+  tags:
+    - docker

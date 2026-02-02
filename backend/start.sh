@@ -14,8 +14,8 @@ echo "Running Prisma migrations..."
 npx prisma migrate deploy
 
 # Zur auskommentieren, wenn neue Seeder Vorhanden sind.
-echo "Running Prisma seed..."
-npx prisma db seed
+#echo "Running Prisma seed..."
+#npx prisma db seed
 
 echo "Starting server..."
 node dist/server.js

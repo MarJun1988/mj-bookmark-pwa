@@ -56,6 +56,8 @@ watch(
 
 <template>
   <Toast position="bottom-right" />
+  <ConfirmDialog />
+
   <DevBar v-if="isDev" />
   <OfflineBar />
   <div

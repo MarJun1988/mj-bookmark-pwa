@@ -366,6 +366,7 @@ async function handleBlur(field: FormField) {
         :readonly="readonly"
         :required="required"
         :aria-required="required"
+        :feedback="field.componentProps?.feedback"
         fluid
         toggleMask
         @update:model-value="emit('update', $event)"

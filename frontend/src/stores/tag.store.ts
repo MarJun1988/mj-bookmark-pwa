@@ -1,13 +1,24 @@
 import { defineStore } from "pinia";
 import { computed, nextTick, ref, type Ref, watch } from "vue";
 import { useMutation } from "@vue/apollo-composable";
-import { type CustomColumnProps, type SelectOption, type Tag } from "@/utils/interfaces.ts";
+import {
+  type CustomColumnProps,
+  type SelectOption,
+  type Tag,
+} from "@/utils/interfaces.ts";
 import gql from "graphql-tag";
 import { useCommonStore } from "@/stores/common.store.ts";
 
-import type { DataTableFilterMeta, DataTableSortMeta } from "primevue/datatable";
+import type {
+  DataTableFilterMeta,
+  DataTableSortMeta,
+} from "primevue/datatable";
 import { FilterMatchMode } from "@primevue/core/api";
-import type { DataTableFilterEvent, DataTablePageEvent, DataTableSortEvent } from "primevue";
+import type {
+  DataTableFilterEvent,
+  DataTablePageEvent,
+  DataTableSortEvent,
+} from "primevue";
 import { apolloClient } from "@/apollo/client.ts";
 import type { RouteLocationRaw, RouteParamValue } from "vue-router";
 import { devLog, mapDates } from "@/utils/utils.ts";
@@ -19,7 +30,7 @@ import {
   QUERY_TAG,
   QUERY_TAGS,
   QUERY_TAGS_FOR_FILTER,
-  QUERY_TAGS_PAGED
+  QUERY_TAGS_PAGED,
 } from "@/utils/graphql/graphql.tag.ts";
 import { useToastStore } from "@/stores/toast.store.ts";
 

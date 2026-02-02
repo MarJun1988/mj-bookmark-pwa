@@ -19,6 +19,12 @@ import { useNetworkStore } from "@/stores/network.store.ts";
 import { useToastStore } from "@/stores/toast.store.ts";
 import { apolloClient } from "@/apollo/client.ts";
 
+export interface DashboardStats {
+  tabs: number;
+  groups: number;
+  items: number;
+}
+
 export const useDashboardStore = defineStore("dashboard", {
   /* ======================
        STATE
@@ -259,6 +265,19 @@ export const useDashboardStore = defineStore("dashboard", {
             : (tab.groups?.find((g) => g.id === groupId)?.items ?? []);
 
         return [...items].sort((a, b) => a.order - b.order);
+      };
+    },
+
+    stats(state): DashboardStats {
+      const tabs = state.me?.tabs ?? [];
+
+      const groups = tabs.flatMap((t) => t.groups ?? []);
+      const items = groups.flatMap((g) => g.items ?? []);
+
+      return {
+        tabs: tabs.length,
+        groups: groups.length,
+        items: items.length,
       };
     },
   },

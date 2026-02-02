@@ -14,6 +14,12 @@ export const typeDefs = /* GraphQL */ `
     user: User!
   }
 
+  type DataExport {
+    filename: String!
+    mimeType: String!
+    contentBase64: String!
+  }
+
   extend type Mutation {
     login(email: Email!, password: String!): AuthPayload!
     logout: Boolean!
@@ -45,5 +51,9 @@ export const typeDefs = /* GraphQL */ `
       newPassword: String!
       newPasswordReplay: String!
     ): Boolean!
+
+    deleteAccount(email: Email!, password: String!): Boolean!
+
+    requestDataExport(email: Email!, password: String!): DataExport!
   }
 `
