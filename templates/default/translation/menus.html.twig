@@ -1,0 +1,37 @@
+<script>
+    const __MENUS__ = {
+        mainMenu: {
+            dashboard: {
+                label: "{{ 'menus.mainMenu.dashboard.label'|trans|raw }}",
+                children: "{{ 'menus.mainMenu.dashboard.children'|trans|raw }}",
+            },
+            managementArea: {
+                label: "{{ 'menus.mainMenu.managementArea.label'|trans|raw }}",
+                children: {
+                    tabArea: {
+                        label: "{{ 'menus.mainMenu.managementArea.children.tabArea.label'|trans|raw }}",
+                        icon: "{{ 'menus.mainMenu.managementArea.children.tabArea.icon'|trans|raw }}",
+                        children: {
+                            label: "{{ 'menus.mainMenu.managementArea.children.tabArea.children.label'|trans|raw }}",
+                        }
+                    },
+                    bookmarkCategory: {
+                        label: "{{ 'menus.mainMenu.managementArea.children.bookmarkCategory.label'|trans|raw }}",
+                        icon: "{{ 'menus.mainMenu.managementArea.children.bookmarkCategory.icon'|trans|raw }}",
+                        children: {
+                            label: "{{ 'menus.mainMenu.managementArea.children.bookmarkCategory.children.label'|trans|raw }}",
+                        }
+                    },
+                    bookmark: {
+                        label: "{{ 'menus.mainMenu.managementArea.children.bookmark.label'|trans|raw }}",
+                        icon: "{{ 'menus.mainMenu.managementArea.children.bookmark.icon'|trans|raw }}",
+                        children: {
+                            label: "{{ 'menus.mainMenu.managementArea.children.bookmark.children.label'|trans|raw }}",
+                        }
+                    }
+                }
+            },
+        },
+
+    };
+</script>

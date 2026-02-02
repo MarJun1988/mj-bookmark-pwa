@@ -1,0 +1,242 @@
+<script>
+    const __SITES__ = {
+        login: {
+            mainHeaderTitle: "{{ 'sites.login.mainHeaderTitle'|trans|raw }}",
+            headline: "{{ 'sites.login.headline'|trans|raw }}",
+            fields: {
+                mailAddress: {
+                    label: "{{ 'sites.login.fields.mailAddress.label'|trans|raw }}",
+                    help: "{{ 'sites.login.fields.mailAddress.help'|trans|raw }}",
+                    maxlength: "{{ 'sites.login.fields.mailAddress.maxlength'|trans|raw }}",
+                    minlength: "{{ 'sites.login.fields.mailAddress.minlength'|trans|raw }}",
+                    required: "{{ 'sites.login.fields.mailAddress.required'|trans|raw }}",
+                },
+                password: {
+                    label: "{{ 'sites.login.fields.password.label'|trans|raw }}",
+                    help: "{{ 'sites.login.fields.password.help'|trans|raw }}",
+                    maxlength: "{{ 'sites.login.fields.password.maxlength'|trans|raw }}",
+                    minlength: "{{ 'sites.login.fields.password.minlength'|trans|raw }}",
+                    required: "{{ 'sites.login.fields.password.required'|trans|raw }}",
+                }
+            },
+            buttons: {
+                login: {
+                    label: "{{ 'sites.login.buttons.login.label'|trans|raw }}",
+                }
+            }
+        },
+        register: {
+            headline: "{{ 'sites.register.headline'|trans|raw }}",
+            stepPrev: "{{ 'sites.register.stepPrev'|trans|raw }}",
+            stepNext: "{{ 'sites.register.stepNext'|trans|raw }}",
+
+            personalInformation: {
+                title: "{{ 'sites.register.personalInformation.title'|trans|raw }}",
+                fields: {
+                    surname: {
+                        label: "{{ 'sites.register.personalInformation.fields.surname.label'|trans|raw }}",
+                        help: "{{ 'sites.register.personalInformation.fields.surname.help'|trans|raw }}",
+                        maxlength: "{{ 'sites.register.personalInformation.fields.surname.maxlength'|trans|raw }}",
+                        minlength: "{{ 'sites.register.personalInformation.fields.surname.minlength'|trans|raw }}",
+                        required: "{{ 'sites.register.personalInformation.fields.surname.required'|trans|raw }}"
+                    },
+                    firstname: {
+                        label: "{{ 'sites.register.personalInformation.fields.firstname.label'|trans|raw }}",
+                        help: "{{ 'sites.register.personalInformation.fields.firstname.help'|trans|raw }}",
+                        maxlength: "{{ 'sites.register.personalInformation.fields.firstname.maxlength'|trans|raw }}",
+                        minlength: "{{ 'sites.register.personalInformation.fields.firstname.minlength'|trans|raw }}",
+                        required: "{{ 'sites.register.personalInformation.fields.firstname.required'|trans|raw }}"
+                    },
+                    mailAddress: {
+                        label: "{{ 'sites.register.personalInformation.fields.mailAddress.label'|trans|raw }}",
+                        help: "{{ 'sites.register.personalInformation.fields.mailAddress.help'|trans|raw }}",
+                        maxlength: "{{ 'sites.register.personalInformation.fields.mailAddress.maxlength'|trans|raw }}",
+                        minlength: "{{ 'sites.register.personalInformation.fields.mailAddress.minlength'|trans|raw }}",
+                        required: "{{ 'sites.register.personalInformation.fields.mailAddress.required'|trans|raw }}"
+                    }
+                }
+            },
+            officeInformation: {
+                title: "{{ 'sites.register.officeInformation.title'|trans|raw }}",
+                fields: {
+                    federalState: {
+                        label: "{{ 'sites.register.officeInformation.fields.federalState.label'|trans|raw }}",
+                        help: "{{ 'sites.register.officeInformation.fields.federalState.help'|trans|raw }}",
+                        required: "{{ 'sites.register.officeInformation.fields.federalState.required'|trans|raw }}"
+                    },
+                    department: {
+                        label: "{{ 'sites.register.officeInformation.fields.department.label'|trans|raw }}",
+                        help: "{{ 'sites.register.officeInformation.fields.department.help'|trans|raw }}",
+                        required: "{{ 'sites.register.officeInformation.fields.department.required'|trans|raw }}"
+                    },
+                    userGroup: {
+                        label: "{{ 'sites.register.officeInformation.fields.userGroup.label'|trans|raw }}",
+                        help: "{{ 'sites.register.officeInformation.fields.userGroup.help'|trans|raw }}",
+                        required: "{{ 'sites.register.officeInformation.fields.userGroup.required'|trans|raw }}"
+                    },
+                },
+                messages: {
+                    noDepartmentsFound: "{{ 'sites.register.officeInformation.messages.noDepartmentsFound'|trans|raw }}",
+                    noUserGroupsFound: "{{ 'sites.register.officeInformation.messages.noUserGroupsFound'|trans|raw }}"
+                },
+                subHeadline: {
+                    newDepartment: "{{ 'sites.register.officeInformation.subHeadline.newDepartment'|trans|raw }}",
+                    newUserGroup: "{{ 'sites.register.officeInformation.subHeadline.newUserGroup'|trans|raw }}"
+                },
+                buttons: {
+                    newDepartment: {
+                        label: "{{ 'sites.register.officeInformation.buttons.newDepartment.label'|trans|raw }}",
+                    },
+                    newUserGroup: {
+                        label: "{{ 'sites.register.officeInformation.buttons.newUserGroup.label'|trans|raw }}",
+                    }
+                }
+            }
+        },
+        dashboard: {
+            greetingHeadline:  "{{ 'sites.dashboard.greetingHeadline'|trans|raw }}",
+            textSection:  "{{ 'sites.dashboard.textSection'|trans|raw }}",
+        },
+        generals: {
+            sectionOne: {
+                headline:  "{{ 'sites.generals.sectionOne.headline'|trans|raw }}",
+                fieldSiteNamePdf: {
+                    label:  "{{ 'sites.generals.sectionOne.fieldSiteNamePdf.label'|trans|raw }}",
+                    help:  "{{ 'sites.generals.sectionOne.fieldSiteNamePdf.help'|trans|raw }}",
+                    maxlength:  "{{ 'sites.generals.sectionOne.fieldSiteNamePdf.maxlength'|trans|raw }}",
+                    minlength:  "{{ 'sites.generals.sectionOne.fieldSiteNamePdf.minlength'|trans|raw }}",
+                    required:  "{{ 'sites.generals.sectionOne.fieldSiteNamePdf.required'|trans|raw }}",
+                },
+                fieldSiteNameApplicationLong: {
+                    label:  "{{ 'sites.generals.sectionOne.fieldSiteNameApplicationLong.label'|trans|raw }}",
+                    help:  "{{ 'sites.generals.sectionOne.fieldSiteNameApplicationLong.help'|trans|raw }}",
+                    maxlength:  "{{ 'sites.generals.sectionOne.fieldSiteNameApplicationLong.maxlength'|trans|raw }}",
+                    minlength:  "{{ 'sites.generals.sectionOne.fieldSiteNameApplicationLong.minlength'|trans|raw }}",
+                    required:  "{{ 'sites.generals.sectionOne.fieldSiteNameApplicationLong.required'|trans|raw }}",
+                },
+                fieldSiteNameApplicationShort: {
+                    label:  "{{ 'sites.generals.sectionOne.fieldSiteNameApplicationShort.label'|trans|raw }}",
+                    help:  "{{ 'sites.generals.sectionOne.fieldSiteNameApplicationShort.help'|trans|raw }}",
+                    maxlength:  "{{ 'sites.generals.sectionOne.fieldSiteNameApplicationShort.maxlength'|trans|raw }}",
+                    minlength:  "{{ 'sites.generals.sectionOne.fieldSiteNameApplicationShort.minlength'|trans|raw }}",
+                    required:  "{{ 'sites.generals.sectionOne.fieldSiteNameApplicationShort.required'|trans|raw }}",
+                },
+            },
+            sectionTwo: {
+                headline:  "{{ 'sites.generals.sectionTwo.headline'|trans|raw }}",
+                fieldWarChief: {
+                    label:  "{{ 'sites.generals.sectionTwo.fieldWarChief.label'|trans|raw }}",
+                    help:  "{{ 'sites.generals.sectionTwo.fieldWarChief.help'|trans|raw }}",
+                    required:  "{{ 'sites.generals.sectionTwo.fieldWarChief.required'|trans|raw }}",
+                },
+                fieldDeputyChief: {
+                    label:  "{{ 'sites.generals.sectionTwo.fieldDeputyChief.label'|trans|raw }}",
+                    help:  "{{ 'sites.generals.sectionTwo.fieldDeputyChief.help'|trans|raw }}",
+                    required:  "{{ 'sites.generals.sectionTwo.fieldDeputyChief.required'|trans|raw }}",
+                },
+                fieldOperationReportDefaultFunctionMember: {
+                    label:  "{{ 'sites.generals.sectionTwo.fieldOperationReportDefaultFunctionMember.label'|trans|raw }}",
+                    help:  "{{ 'sites.generals.sectionTwo.fieldOperationReportDefaultFunctionMember.help'|trans|raw }}",
+                    required:  "{{ 'sites.generals.sectionTwo.fieldOperationReportDefaultFunctionMember.required'|trans|raw }}",
+                },
+            },
+            sectionThree: {
+                headline:  "{{ 'sites.generals.sectionThree.headline'|trans|raw }}",
+                version: {
+                    title:  "{{ 'sites.generals.sectionThree.version.title'|trans|raw }}",
+                    subtitle:  "{{ 'sites.generals.sectionThree.version.subtitle'|trans|raw }}",
+                }
+            }
+        },
+        operationReport: {
+            stepChanger: {
+                labelSplitButton: "{{ 'sites.operationReport.stepChanger.labelSplitButton'|trans|raw }}",
+                items: {
+                    create: "{{ 'sites.operationReport.stepChanger.items.create'|trans|raw }}",
+                    load: "{{ 'sites.operationReport.stepChanger.items.load'|trans|raw }}",
+                    remove: "{{ 'sites.operationReport.stepChanger.items.remove'|trans|raw }}"
+                },
+                dialog: {
+                    title: "{{ 'sites.operationReport.stepChanger.dialog.title'|trans|raw }}",
+                    table: {
+                        columns: {
+                            id: "{{ 'sites.operationReport.stepChanger.dialog.table.columns.id'|trans|raw }}",
+                            store: "{{ 'sites.operationReport.stepChanger.dialog.table.columns.store'|trans|raw }}",
+                            comment: "{{ 'sites.operationReport.stepChanger.dialog.table.columns.comment'|trans|raw }}",
+                            createdAt: "{{ 'sites.operationReport.stepChanger.dialog.table.columns.createdAt'|trans|raw }}",
+                            createdFrom: "{{ 'sites.operationReport.stepChanger.dialog.table.columns.createdFrom'|trans|raw }}",
+                            updatedAt: "{{ 'sites.operationReport.stepChanger.dialog.table.columns.updatedAt'|trans|raw }}",
+                            updatedFrom: "{{ 'sites.operationReport.stepChanger.dialog.table.columns.updatedFrom'|trans|raw }}"
+                        }
+                    }
+                }
+            },
+            stepOne: {
+                headlineIncomingAlert: "{{ 'sites.operationReport.stepOne.headlineIncomingAlert'|trans|raw }}",
+                headlineVehicle: "{{ 'sites.operationReport.stepOne.headlineVehicle'|trans|raw }}",
+            },
+            stepTwo: {
+                headlineOriginalMessage: "{{ 'sites.operationReport.stepTwo.headlineOriginalMessage'|trans|raw }}",
+                headlineOperationDetails: "{{ 'sites.operationReport.stepTwo.headlineOperationDetails'|trans|raw }}",
+            },
+            stepThree: {
+                errorVehicle: "{{ 'sites.operationReport.stepThree.errorVehicle'|trans|raw }}",
+                errorVehicleToolTip: "{{ 'sites.operationReport.stepThree.errorVehicleToolTip'|trans|raw }}",
+                headlineMemberFunction: "{{ 'sites.operationReport.stepThree.headlineMemberFunction'|trans|raw }}",
+            },
+            stepFour: {
+                table: {
+                    headline: "{{ 'sites.operationReport.stepFour.table.headline'|trans|raw }}",
+                    subHeadline: "{{ 'sites.operationReport.stepFour.table.subHeadline'|trans|raw }}",
+                    defaultCommentText: "{{ 'sites.operationReport.stepFour.table.defaultCommentText'|trans|raw }}",
+                    columns: {
+                        id: "{{ 'sites.operationReport.stepFour.table.columns.id'|trans|raw }}",
+                        rescueOrganizations: "{{ 'sites.operationReport.stepFour.table.columns.rescueOrganizations'|trans|raw }}",
+                        numberOfForces: "{{ 'sites.operationReport.stepFour.table.columns.numberOfForces'|trans|raw }}",
+                        vehicles: "{{ 'sites.operationReport.stepFour.table.columns.vehicles'|trans|raw }}",
+                        comment: "{{ 'sites.operationReport.stepFour.table.columns.comment'|trans|raw }}",
+
+                    }
+                },
+                dialog: {
+                    title: "{{ 'sites.operationReport.stepFour.dialog.title'|trans|raw }}",
+                    fields: {
+                        rescueOrganizations: {
+                            label: "{{ 'sites.operationReport.stepFour.dialog.fields.rescueOrganizations.label'|trans|raw }}",
+                            help: "{{ 'sites.operationReport.stepFour.dialog.fields.rescueOrganizations.help'|trans|raw }}",
+                            maxlength: "{{ 'sites.operationReport.stepFour.dialog.fields.rescueOrganizations.maxlength'|trans|raw }}",
+                            minlength: "{{ 'sites.operationReport.stepFour.dialog.fields.rescueOrganizations.minlength'|trans|raw }}",
+                            required: "{{ 'sites.operationReport.stepFour.dialog.fields.rescueOrganizations.required'|trans|raw }}"
+                        },
+                        numberOfForces: {
+                            label: "{{ 'sites.operationReport.stepFour.dialog.fields.numberOfForces.label'|trans|raw }}",
+                            help: "{{ 'sites.operationReport.stepFour.dialog.fields.numberOfForces.help'|trans|raw }}",
+                            maxlength: "{{ 'sites.operationReport.stepFour.dialog.fields.numberOfForces.maxlength'|trans|raw }}",
+                            minlength: "{{ 'sites.operationReport.stepFour.dialog.fields.numberOfForces.minlength'|trans|raw }}",
+                            required: "{{ 'sites.operationReport.stepFour.dialog.fields.numberOfForces.required'|trans|raw }}"
+                        },
+                        vehicles: {
+                            label: "{{ 'sites.operationReport.stepFour.dialog.fields.vehicles.label'|trans|raw }}",
+                            help: "{{ 'sites.operationReport.stepFour.dialog.fields.vehicles.help'|trans|raw }}",
+                            maxlength: "{{ 'sites.operationReport.stepFour.dialog.fields.vehicles.maxlength'|trans|raw }}",
+                            minlength: "{{ 'sites.operationReport.stepFour.dialog.fields.vehicles.minlength'|trans|raw }}",
+                            required: "{{ 'sites.operationReport.stepFour.dialog.fields.vehicles.required'|trans|raw }}"
+                        },
+                        comment: {
+                            label: "{{ 'sites.operationReport.stepFour.dialog.fields.comment.label'|trans|raw }}",
+                            help: "{{ 'sites.operationReport.stepFour.dialog.fields.comment.help'|trans|raw }}",
+                            maxlength: "{{ 'sites.operationReport.stepFour.dialog.fields.comment.maxlength'|trans|raw }}",
+                            minlength: "{{ 'sites.operationReport.stepFour.dialog.fields.comment.minlength'|trans|raw }}",
+                            required: "{{ 'sites.operationReport.stepFour.dialog.fields.comment.required'|trans|raw }}"
+                        }
+                    }
+                }
+            },
+            stepFive: {
+                errorTool: "{{ 'sites.operationReport.stepFive.errorTool'|trans|raw }}",
+                errorToolToolTip: "{{ 'sites.operationReport.stepFive.errorToolToolTip'|trans|raw }}",
+                headlineNumberOfTool: "{{ 'sites.operationReport.stepFive.headlineNumberOfTool'|trans|raw }}",
+            },
+        }
+    }
+</script>

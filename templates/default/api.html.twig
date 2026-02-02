@@ -1,0 +1,36 @@
+<script>
+    const __API__ = {
+        // Abschnitte - Tab Areas
+        tabArea: {
+            getForDatatable: {{ path('api_tab_area_get_for_datatable')|json_encode|raw }},
+            getForDashboard: {{ path('api_tab_area_get_for_dashboard')|json_encode|raw }},
+            getForDropdown: {{ path('api_tab_area_get_for_dropdown',  { 'id': ' ' })|json_encode|raw }},
+            getById: {{ path('api_tab_area_get_by_id',  { 'id': ' ' })|json_encode|raw }},
+            getLastSorting: {{ path('api_tab_area_get_last_sorting',  { 'id': ' ' })|json_encode|raw }},
+            new: {{ path('api_tab_area_new')|json_encode|raw }},
+            edit: {{ path('api_tab_area_edit',  { 'id': ' ' })|json_encode|raw }},
+            delete: {{ path('api_tab_area_delete', { 'id': ' ' })|json_encode|raw }}
+        },
+        // Lesezeichen Kategorien
+        bookmarkCategory: {
+            getForDatatable: {{ path('api_bookmark_category_get_for_datatable')|json_encode|raw }},
+            getForDropdown: {{ path('api_bookmark_category_get_for_dropdown',  { 'id': ' ' })|json_encode|raw }},
+            getById: {{ path('api_bookmark_category_get_by_id',  { 'id': ' ' })|json_encode|raw }},
+            getLastSorting: {{ path('api_bookmark_category_get_last_sorting',  { 'idTabArea': ' ' })|json_encode|raw }},
+            new: {{ path('api_bookmark_category_new')|json_encode|raw }},
+            edit: {{ path('api_bookmark_category_edit',  { 'id': ' ' })|json_encode|raw }},
+            delete: {{ path('api_bookmark_category_delete', { 'id': ' ' })|json_encode|raw }}
+        },
+        // Lesezeichen
+        bookmark: {
+            getForDatatable: {{ path('api_bookmark_get_for_datatable')|json_encode|raw }},
+            getForDropdown: {{ path('api_bookmark_get_for_dropdown',  { 'id': ' ' })|json_encode|raw }},
+            getById: {{ path('api_bookmark_get_by_id',  { 'id': ' ' })|json_encode|raw }},
+            getLastSorting: {{ path('api_bookmark_get_last_sorting',  { 'idBookmarkCategory': ' ' })|json_encode|raw }},
+            new: {{ path('api_bookmark_new')|json_encode|raw }},
+            edit: {{ path('api_bookmark_edit',  { 'id': ' ' })|json_encode|raw }},
+            delete: {{ path('api_bookmark_delete', { 'id': ' ' })|json_encode|raw }},
+            getSiteTitle: {{ path('api_bookmark_get_site_title')|json_encode|raw }},
+        }
+    }
+</script>
