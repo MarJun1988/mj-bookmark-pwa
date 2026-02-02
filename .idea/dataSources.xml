@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="mj-bookmark-pwa@localhost" uuid="df42dafe-3569-4681-bdf8-d270bb057bfe">
-      <driver-ref>mysql.8</driver-ref>
+    <data-source source="LOCAL" name="bookmark-db@192.168.112.187" uuid="b94fbb46-a806-49df-a1b5-4c6e87fa7526">
+      <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/mj-bookmark-pwa</jdbc-url>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://192.168.112.187:5432/bookmark-db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="@192.168.2.167" uuid="1c21cb9c-6e9b-49c0-820c-ec8d8a27bcaa">
-      <driver-ref>mysql.8</driver-ref>
+    <data-source source="LOCAL" name="bookmarkdb@localhost [2]" uuid="3335de9f-1330-4107-943d-0fd956a52f87">
+      <driver-ref>postgresql</driver-ref>
       <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://192.168.2.167:3306</jdbc-url>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://localhost:5432/bookmarkdb</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="bookmarkdb@10.0.30.187" uuid="49d3c5c7-6b86-4e6e-89ef-2040eb74958b">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://10.0.30.187:5432/bookmarkdb</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

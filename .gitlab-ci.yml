@@ -1,0 +1,420 @@
+stages:
+  - test
+  - build
+  - publish
+  - deploy
+
+variables:
+  GROUND_VERSION: 2.0.0.1
+  VERSION: ${CI_COMMIT_TAG:-${GROUND_VERSION}-${CI_COMMIT_SHORT_SHA}}
+  IMAGE_BACKEND: "$CI_REGISTRY_IMAGE/backend"
+  IMAGE_FRONTEND: "$CI_REGISTRY_IMAGE/frontend"
+  IMAGE_VITEPRESS: "$CI_REGISTRY_IMAGE/vitepress"
+  DOCKER_TLS_CERTDIR: ""
+  DATABASE_URL: "postgresql://dummy:dummy@localhost:5432/dummy"
+
+# =========================
+# 🧪 TEST
+# =========================
+
+backend_test:
+  stage: test
+  image: node:20
+  script:
+    - cd backend
+    - npm ci
+    - npm run lint
+  tags:
+    - docker
+
+frontend_test:
+  stage: test
+  image: node:20
+  script:
+    - cd frontend
+    - npm ci
+    - npm run lint
+  tags:
+    - docker
+
+vitepress_test:
+  stage: test
+  image: node:20
+  script:
+    - cd vitepress
+    - npm ci
+    - npm run lint:docs
+  tags:
+    - docker
+
+# =========================
+# 🏗️ BUILD (optional, Artefakte)
+# =========================
+
+build_backend:
+  stage: build
+  image: node:20
+  script:
+    - cd backend
+    - npm ci
+    - npx prisma generate
+    - npm run build
+  artifacts:
+    paths:
+      - backend/dist
+  tags:
+    - docker
+
+build_frontend:
+  stage: build
+  image: node:20
+  script:
+    - cd frontend
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist
+  tags:
+    - docker
+
+build_vitepress:
+  stage: build
+  image: node:20
+  script:
+    - cd vitepress
+    - npm ci
+    - npm run docs:build
+  artifacts:
+    paths:
+      - vitepress/dist
+  tags:
+    - docker
+
+# =========================
+# 🐳 PUBLISH DOCKER IMAGES
+# =========================
+
+publish_backend:
+  stage: publish
+  image: docker:26
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker buildx create --name ci-builder --driver docker-container --use || docker buildx use ci-builder
+    - docker buildx inspect --bootstrap
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        VERSION="$CI_COMMIT_TAG"
+      else
+        VERSION="${GROUND_VERSION}-$CI_COMMIT_SHORT_SHA"
+      fi
+      echo "Building backend version: $VERSION"
+      docker buildx build \
+        --platform linux/amd64 \
+        -f backend/Dockerfile.prod \
+        -t $IMAGE_BACKEND:latest \
+        -t $IMAGE_BACKEND:$VERSION \
+        --push \
+        ./backend
+  tags:
+    - docker
+
+publish_frontend:
+  stage: publish
+  image: docker:26
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker buildx create --name ci-builder --driver docker-container --use || docker buildx use ci-builder
+    - docker buildx inspect --bootstrap
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        VERSION="$CI_COMMIT_TAG"
+      else
+        VERSION="${GROUND_VERSION}-$CI_COMMIT_SHORT_SHA"
+      fi
+      echo "Building frontend version: $VERSION"
+      docker buildx build \
+        --platform linux/amd64 \
+        -f frontend/Dockerfile.prod \
+        -t $IMAGE_FRONTEND:latest \
+        -t $IMAGE_FRONTEND:$VERSION \
+        --push \
+        ./frontend
+  tags:
+    - docker
+
+publish_vitepress:
+  stage: publish
+  image: docker:26
+  script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+    - docker buildx create --name ci-builder --driver docker-container --use || docker buildx use ci-builder
+    - docker buildx inspect --bootstrap
+    - |
+      if [ -n "$CI_COMMIT_TAG" ]; then
+        VERSION="$CI_COMMIT_TAG"
+      else
+        VERSION="${GROUND_VERSION}-$CI_COMMIT_SHORT_SHA"
+      fi
+      echo "Building vitepress version: $VERSION"
+      docker buildx build \
+        --platform linux/amd64 \
+        -f vitepress/Dockerfile \
+        -t $IMAGE_VITEPRESS:latest \
+        -t $IMAGE_VITEPRESS:$VERSION \
+        --push \
+        ./vitepress
+  tags:
+    - docker
+
+# =========================
+# 🚀 DEPLOY (SSH)
+# =========================
+#        echo "🔄 Sync repository"
+#        git fetch origin
+#        git checkout testing
+#        git reset --hard origin/testing
+
+#  🎯 Matcht z. B.
+#  Branch	Match
+#  1-feature-map	✅
+#  2_fix_prisma	✅
+#  fix/login-bug	✅
+#  hotfix-redis	✅
+#  bugfix/map-error	✅
+#  release/2.0.0	✅
+#  testing	❌
+#  main	❌
+#  developer	❌
+#
+deploy_to_dev_system_fw:
+  stage: deploy
+  image: docker:24
+  rules:
+    - if: >
+        $CI_COMMIT_BRANCH =~ /^([0-9]+|fix|hotfix|bugfix|release)(\/|-|_).*/
+  script:
+    - echo "$DEV_SYSTEM_SSH_PRIVATE_KEY" | tr -d '\r' > /tmp/key.pem
+    - chmod 600 /tmp/key.pem
+    - |
+      ssh -o StrictHostKeyChecking=no -i /tmp/key.pem \
+      $DEV_SYSTEM_USER@$DEV_SYSTEM_HOST \
+      "CI_BRANCH=$CI_COMMIT_REF_NAME bash -s" << 'EOF'
+       set -e
+      
+       echo "Remove Unsesed Containers"
+       docker system prune -f
+
+       cd /opt/mj-bookmark-pwa
+
+       echo "📦 Fetch all branches"
+       git fetch origin
+
+       echo "🔀 Checkout branch: $CI_BRANCH"
+       git checkout "$CI_BRANCH" || git checkout -b "$CI_BRANCH" "origin/$CI_BRANCH"
+
+       echo "⬇️ Pull latest changes"
+       git pull origin "$CI_BRANCH"
+
+       echo "🐳 Pull images"
+       docker compose -f docker-compose.prod.yml pull
+
+       echo "🚀 Start containers"
+       docker compose -f docker-compose.prod.yml up -d
+
+       echo "⏳ Waiting for containers to become healthy..."
+       for i in {1..30}; do
+         unhealthy=$(docker ps --filter "health=unhealthy" --format "{{.Names}}")
+         starting=$(docker ps --filter "health=starting" --format "{{.Names}}")
+
+         if [ -z "$unhealthy" ] && [ -z "$starting" ]; then
+           echo "✅ All containers are healthy"
+           exit 0
+         fi
+
+         echo "Waiting... ($i/30)"
+         sleep 5
+       done
+
+       echo "❌ Containers did not become healthy in time"
+       docker ps
+       exit 1
+      EOF
+  tags:
+    - docker
+#
+deploy_to_dev_system_lxc:
+  stage: deploy
+  image: docker:24
+  rules:
+    - if: >
+        $CI_COMMIT_BRANCH =~ /^([0-9]+|fix|hotfix|bugfix|release)(\/|-|_).*/
+  script:
+    - echo "$DEV_SYSTEM_LXC_SSH_PRIVATE_KEY" | tr -d '\r' > /tmp/key.pem
+    - chmod 600 /tmp/key.pem
+    - |
+      ssh -o StrictHostKeyChecking=no -i /tmp/key.pem \
+      $DEV_SYSTEM_LXC_USER@$DEV_LXC_SYSTEM_HOST \
+      "CI_BRANCH=$CI_COMMIT_REF_NAME bash -s" << 'EOF'
+       set -e
+      
+       echo "Remove Unsesed Containers"
+       docker system prune -f
+
+       cd /opt/mj-bookmark-pwa
+
+       echo "📦 Fetch all branches"
+       git fetch origin
+
+       echo "🔀 Checkout branch: $CI_BRANCH"
+       git checkout "$CI_BRANCH" || git checkout -b "$CI_BRANCH" "origin/$CI_BRANCH"
+
+       echo "⬇️ Pull latest changes"
+       git pull origin "$CI_BRANCH"
+
+       echo "🐳 Pull images"
+       docker compose -f docker-compose.prod.yml pull
+
+       echo "🚀 Start containers"
+       docker compose -f docker-compose.prod.yml up -d
+
+       echo "⏳ Waiting for containers to become healthy..."
+       for i in {1..30}; do
+         unhealthy=$(docker ps --filter "health=unhealthy" --format "{{.Names}}")
+         starting=$(docker ps --filter "health=starting" --format "{{.Names}}")
+
+         if [ -z "$unhealthy" ] && [ -z "$starting" ]; then
+           echo "✅ All containers are healthy"
+           exit 0
+         fi
+
+         echo "Waiting... ($i/30)"
+         sleep 5
+       done
+
+       echo "❌ Containers did not become healthy in time"
+       docker ps
+       exit 1
+      EOF
+  tags:
+    - docker
+#deploy_to_prod_system_lxc:
+#  stage: deploy
+#  image: docker:24
+#  rules:
+#    - if: '$CI_COMMIT_BRANCH == "developer"'
+#  script:
+#    - echo "DEV_USER=$PROD_LXC_SYSTEM_USER"
+#    - echo "DEV_HOST=$PROD_LXC_SYSTEM_HOST"
+#    - echo "$PROD_LXC_SYSTEM_SSH_PRIVATE_KEY" | tr -d '\r' > /tmp/key.pem
+#    - chmod 600 /tmp/key.pem
+#    - |
+#      ssh -o StrictHostKeyChecking=no -i /tmp/key.pem $PROD_LXC_SYSTEM_USER@$PROD_LXC_SYSTEM_HOST << 'EOF'
+#        cd /opt/fw-operation-display &&
+#        echo "Pull git"
+#        git pull
+#
+#        docker compose -f docker-compose.prod.yml pull &&
+#        docker compose -f docker-compose.prod.yml up -d --build
+#
+#        echo "⏳ Waiting for containers to become healthy..."
+#
+#        for i in {1..30}; do
+#          unhealthy=$(docker ps --filter "health=unhealthy" --format "{{.Names}}")
+#          starting=$(docker ps --filter "health=starting" --format "{{.Names}}")
+#
+#          if [ -z "$unhealthy" ] && [ -z "$starting" ]; then
+#            echo "✅ All containers are healthy"
+#            exit 0
+#          fi
+#
+#          echo "Waiting... ($i/30)"
+#          sleep 5
+#        done
+#
+#        echo "❌ Containers did not become healthy in time"
+#        docker ps
+#        exit 1
+#      EOF
+#  tags:
+#    - docker
+#
+#deploy_to_prod_ndw_system_raspberry:
+#  stage: deploy
+#  image: docker:24
+#  only:
+#    - tags
+#  script:
+#    - echo "$PROD_NDW_RASPBERRY_SYSTEM_SSH_PRIVATE_KEY" | tr -d '\r' > /tmp/key.pem
+#    - chmod 600 /tmp/key.pem
+#    - |
+#      ssh -o StrictHostKeyChecking=no -i /tmp/key.pem $PROD_NDW_RASPBERRY_SYSTEM_USER@$PROD_NDW_RASPBERRY_SYSTEM_HOST << 'EOF'
+#        cd /opt/fw-operation-display &&
+#
+#        echo "Pull git"
+#        git pull
+#
+#        docker compose -f docker-compose.prod.yml pull &&
+#        docker compose -f docker-compose.prod.yml up -d --build
+#
+#        echo "⏳ Waiting for containers to become healthy..."
+#
+#        for i in {1..30}; do
+#          unhealthy=$(docker ps --filter "health=unhealthy" --format "{{.Names}}")
+#          starting=$(docker ps --filter "health=starting" --format "{{.Names}}")
+#
+#          if [ -z "$unhealthy" ] && [ -z "$starting" ]; then
+#            echo "✅ All containers are healthy"
+#            exit 0
+#          fi
+#
+#          echo "Waiting... ($i/30)"
+#          sleep 10
+#        done
+#
+#        echo "❌ Containers did not become healthy in time"
+#        docker ps
+#        exit 1
+#      EOF
+#  tags:
+#    - docker
+#
+#deploy_to_prod_liwa_system_raspberry:
+#  stage: deploy
+#  image: docker:24
+#  only:
+#    - tags
+#  script:
+#    - echo "$PROD_LIWA_RASPBERRY_SYSTEM_SSH_PRIVATE_KEY" | tr -d '\r' > /tmp/key.pem
+#    - chmod 600 /tmp/key.pem
+#    - |
+#      ssh -o StrictHostKeyChecking=no -i /tmp/key.pem $PROD_LIWA_RASPBERRY_SYSTEM_USER@$PROD_LIWA_RASPBERRY_SYSTEM_HOST << 'EOF'
+#        cd /opt/fw-operation-display &&
+#
+#        echo "Pull git"
+#        git pull
+#
+#        docker compose -f docker-compose.prod.yml pull &&
+#        docker compose -f docker-compose.prod.yml up -d --build
+#
+#        echo "⏳ Waiting for containers to become healthy..."
+#
+#        for i in {1..30}; do
+#          unhealthy=$(docker ps --filter "health=unhealthy" --format "{{.Names}}")
+#          starting=$(docker ps --filter "health=starting" --format "{{.Names}}")
+#
+#          if [ -z "$unhealthy" ] && [ -z "$starting" ]; then
+#            echo "✅ All containers are healthy"
+#            exit 0
+#          fi
+#
+#          echo "Waiting... ($i/30)"
+#          sleep 10
+#        done
+#
+#        echo "❌ Containers did not become healthy in time"
+#        docker ps
+#        exit 1
+#      EOF
+#  tags:
+#    - docker
