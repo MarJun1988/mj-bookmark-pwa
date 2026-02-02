@@ -6,26 +6,36 @@ search:
     - Anforderungen
     - Software
     - Hardware
-    - Einsatzmonitor
-    - Feuerwehr
-# https://vitepress.dev/reference/default-theme-home-page
+    - Lesezeichen
+    - Bookmark
+    - Selfhosting
+    - GraphQL
+    - Docker
+    - Open Source
 layout: home
 
 hero:
-  name: "Einsatzmonitor Feuerwehr"
-  text: "Der Einsatzmonitor ist ein webbasiertes Einsatz- und Informationsdashboard f&uuml;r Feuerwehren."
+  name: "Lesezeichen Verwaltung"
+  text: "Ein moderner, selbst gehosteter Bookmark-Manager  
+mit Tabs, Gruppen und intelligenter Organisation."
   actions:
     - theme: brand
+      text: Jetzt starten
+      link: /guide/quickstart
+    - theme: alt
+      text: Features ansehen
+      link: /features/tabs
 ---
 
-## Was ist diese Web-Anwendung?
+## ✨ Highlights
 
----
+- Strukturierte Tabs & Gruppen
+- Schnelle Suche
+- Automatische Favicons
+- Datenschutzfreundlich & selbst hostbar
 
-## Anforderungen an Hardware und Software
+## 🎯 Für wen ist diese Anwendung?
 
-### Hardware
-
----
-
-### Software
+- Selbst-Hoster & Home-Lab-Enthusiasten
+- Entwickler & Power-User
+- Alle, die ihre Lesezeichen endlich sinnvoll organisieren wollen

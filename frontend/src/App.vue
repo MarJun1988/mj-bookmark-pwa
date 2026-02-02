@@ -99,7 +99,7 @@ watch(
       >
         <i class="pi pi-question-circle" />
         <a
-          href="/help"
+          href="/help/"
           target="_blank"
         >Zur Hilfe</a>
       </div>

@@ -11,9 +11,9 @@ export default defineConfig({
     assetsDir: 'static',
     cleanUrls: true,
     lastUpdated: true,
-    // head: [['link', {rel: 'icon', href: '/help/favicon.ico'}]],
+    head: [['link', {rel: 'icon', href: '/help/favicon.png'}]],
     themeConfig: {
-        // logo: '/logo.png',
+        logo: '/logo.png',
         search: {
             provider: 'local',
             options: {
@@ -38,7 +38,7 @@ export default defineConfig({
         },
         footer: {
             message: 'Erstellt von M. Junghans',
-            copyright: 'Copyright © 2025'
+            copyright: 'Copyright © 2026'
         },
         lastUpdated: {
             text: 'Zuletzt aktualisiert',
@@ -53,13 +53,12 @@ export default defineConfig({
         },
         outlineTitle: 'Auf dieser Seite',
         // https://vitepress.dev/reference/default-theme-config
-        // nav: [
-        //     {text: 'Vorwort', link: '/'},
-        //     {text: 'Grundlagen', link: '/grundlagen/anforderung'},
-        //     {text: 'Dashboard', link: '/dashboard/'},
-        //     {text: 'Verwaltung', link: '/management-area/'},
-        //     {text: 'Zur Anwendung', link: '/zur-anwendung'},
-        // ],
+        nav: [
+            {text: 'Vorwort', link: '/'},
+            {text: 'Quickstart', link: '/guide/quickstart.md'},
+            {text: 'Grundkonzepte', link: '/guide/basics.md'},
+            {text: 'Zur Anwendung', link: '/zur-anwendung'},
+        ],
         // sidebar: {
         //     '/grundlagen/': grundlagenSidebar,
         //     '/dashboard/': dashboardSidebar,

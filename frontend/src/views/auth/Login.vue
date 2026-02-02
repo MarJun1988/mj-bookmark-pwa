@@ -259,7 +259,7 @@ const { lastVersion } = storeToRefs(versionStore);
         <!-- Links: Hilfe -->
         <a
           class="flex items-center gap-1 hover:text-primary transition"
-          href="/help"
+          href="/help/"
           target="_blank"
         >
           <i class="pi pi-question-circle text-sm" />

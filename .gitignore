@@ -58,3 +58,4 @@ nginx/ssl
 # Old Data
 # =========================
 convert
+/vitepress/.vitepress/cache/

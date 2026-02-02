@@ -39,9 +39,17 @@ export default defineConfig({
         navigateFallback: "/index.html",
 
         // 🔌 Login explizit ausnehmen
-        navigateFallbackDenylist: [/^\/login/, /^\/api/],
+        navigateFallbackDenylist: [
+          /^\/login/,
+          /^\/api/,
+          /^\/help/, // 🔥 DAS FEHLT
+        ],
 
         runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith("/help"),
+            handler: "NetworkOnly",
+          },
           // 🖼 Favicons
           {
             urlPattern: ({ url }) => url.pathname.startsWith("/favicons/"),
