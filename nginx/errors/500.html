@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html class="h-full" lang="de">
+<head>
+    <meta charset="UTF-8"/>
+    <title>500 – Serverfehler</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @keyframes shake {
+            0%, 100% {
+                transform: translateX(0);
+            }
+            25% {
+                transform: translateX(-4px);
+            }
+            75% {
+                transform: translateX(4px);
+            }
+        }
+
+        .animate-shake {
+            animation: shake 0.4s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body class="h-full bg-slate-950 text-red-200 flex items-center justify-center">
+<div class="relative text-center px-6">
+
+    <!-- Glow -->
+    <div class="absolute inset-0 -z-10 blur-3xl opacity-30">
+        <div class="w-72 h-72 mx-auto rounded-full bg-red-600"></div>
+    </div>
+
+    <h1 class="text-[7rem] font-extrabold text-red-500 animate-shake">
+        500
+    </h1>
+
+    <p class="mt-4 text-lg text-slate-400">
+        Interner Serverfehler. Bitte versuche es später erneut.
+    </p>
+
+    <div class="mt-8">
+        <a
+                class="inline-block rounded-xl bg-red-600 px-6 py-3 font-semibold text-white
+               shadow-lg shadow-red-600/30 transition hover:bg-red-500 hover:scale-105"
+                href="/"
+        >
+            Zur Startseite
+        </a>
+    </div>
+
+    <p class="mt-10 text-sm text-slate-600">
+        Fehlercode: 500
+    </p>
+</div>
+</body>
+</html>

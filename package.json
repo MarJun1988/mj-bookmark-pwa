@@ -1,0 +1,31 @@
+{
+  "name": "mj-bookmark-pwa",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "backend",
+    "frontend",
+    "vitepress"
+  ],
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.2.5"
+  },
+  "scripts": {
+    "lint": "npm run lint:backend && npm run lint:frontend && npm run lint:vitepress",
+    "lint:backend": "cd backend && eslint . --cache --max-warnings=0",
+    "lint:frontend": "cd frontend && eslint . --cache --max-warnings=0",
+    "lint:vitepress": "cd vitepress && eslint . --cache --max-warnings=0"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,vue}": [
+      "eslint --fix --max-warnings=0 --no-warn-ignored"
+    ],
+    "**/*.{json,md,yml}": [
+      "prettier --write"
+    ]
+  }
+}
