@@ -1,0 +1,66 @@
+# =========================
+# Dependencies
+# =========================
+node_modules/
+
+# =========================
+# Build outputs
+# =========================
+dist/
+build/
+.out/
+coverage/
+
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Logs
+# =========================
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+*.log
+
+# =========================
+# OS / Editor
+# =========================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# =========================
+# Prisma
+# =========================
+prisma/dev.db
+prisma/*.db
+prisma/*.db-journal
+
+# =========================
+# Docker
+# =========================
+postgres_data/
+pgdata/
+pg_backups/
+
+# =========================
+# Nginx
+# =========================
+nginx/ssl/*.key
+nginx/ssl/*.crt
+nginx/ssl/*.pem
+nginx/ca-certificates/*.crt
+nginx/ca-certificates/*.key
+nginx/ca-certificates/*.pem
+
+# =========================
+# Old Data
+# =========================
+convert
+/vitepress/.vitepress/cache/

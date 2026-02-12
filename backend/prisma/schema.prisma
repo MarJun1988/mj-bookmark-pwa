@@ -1,0 +1,184 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Version {
+  id            String    @id @default(uuid())
+  versionNumber String    @unique
+  description   String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime?
+
+  @@map("versions")
+}
+
+model User {
+  id       String @id @default(uuid())
+  email    String @unique
+  password String
+
+  firstName   String
+  lastName    String
+  displayName String?
+
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tabs Tab[]
+
+  refreshTokens       RefreshToken[]
+  emailVerifications  EmailVerification[]
+  emailVerified       Boolean              @default(false)
+  passwordResetTokens PasswordResetToken[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String @id @default(uuid())
+  tokenHash String @unique
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userAgent String?
+  ipAddress String?
+
+  expiresAt DateTime
+  revoked   Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Tab {
+  id    String @id @default(uuid())
+  title String
+  order Int
+
+  userId String
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  groups Group[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("tabs")
+}
+
+model Group {
+  id    String @id @default(uuid())
+  title String
+  order Int
+
+  tabId String
+  tab   Tab    @relation(fields: [tabId], references: [id], onDelete: Cascade)
+
+  items Item[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([tabId])
+  @@map("groups")
+}
+
+model Item {
+  id    String   @id @default(uuid())
+  type  ItemType @default(LINK)
+  title String?
+  order Int
+
+  groupId String
+  group   Group  @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  /**
+   * Für Links
+   */
+  url     String?
+  favicon String? // 👈 NEU (lokaler Pfad oder URL)
+
+  /**
+   * Für generische Erweiterungen
+   */
+  config Json?
+
+  /**
+   * Tags / Hashtags
+   */
+  tags ItemTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([groupId])
+  @@map("items")
+}
+
+model Tag {
+  id   String @id @default(uuid())
+  name String @unique
+  slug String @unique
+
+  items ItemTag[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("tags")
+}
+
+model ItemTag {
+  itemId String
+  tagId  String
+
+  item Item @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([itemId, tagId])
+  @@index([tagId])
+  @@map("item_tags")
+}
+
+enum ItemType {
+  LINK
+  WIDGET
+  NOTE
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model EmailVerification {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model PasswordResetToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
