@@ -1,0 +1,32 @@
+{
+  "name": "mj-bookmark-pwa",
+  "private": true,
+  "workspaces": [
+    "backend",
+    "frontend",
+    "vitepress"
+  ],
+  "type": "module",
+  "scripts": {
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
+    "format": "oxfmt .",
+    "format:check": "oxfmt . --check",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "oxfmt": "^0.32.0",
+    "oxlint": "^0.4.0"
+  },
+  "lint-staged": {
+    "**/*.{js,ts,vue}": [
+      "oxlint --fix"
+    ],
+    "**/*.{js,ts,vue,json,md,yml,yaml}": [
+      "oxfmt"
+    ]
+  },
+  "prepare": "husky"
+}
