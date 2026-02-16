@@ -1,0 +1,22 @@
+session_name: MJ-Bookmark-PWA
+windows:
+  - window_name: backend
+    panes:
+      - pane_title: backend-dev
+        shell_command:
+          - cd backend
+          - npm run dev
+
+  - window_name: frontend
+    panes:
+      - pane_title: frontend-dev
+        shell_command:
+          - cd frontend
+          - npm run dev
+
+  - window_name: vitepress
+    panes:
+      - pane_title: vitepress-dev
+        shell_command:
+          - cd vitepress
+          - npm run docs:dev
