@@ -1,0 +1,8 @@
+/* z. B. src/assets/drag.css */
+.drag-chosen {
+  @apply ring-2 ring-blue-500/40;
+}
+
+.drag-ghost {
+  @apply opacity-40;
+}

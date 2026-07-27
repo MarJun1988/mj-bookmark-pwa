@@ -1,0 +1,52 @@
+import { onError } from "@apollo/client/link/error";
+import { fromPromise } from "@apollo/client";
+import { apolloClient } from "../client";
+import { useAuthStore } from "../../stores/auth.store.ts";
+import { REFRESH_TOKEN_MUTATION } from "../../graphql/mutations/refreshToken.ts";
+
+let isRefreshing = false;
+let pendingRequests: (() => void)[] = [];
+
+function resolvePendingRequests() {
+  pendingRequests.forEach((cb) => cb());
+  pendingRequests = [];
+}
+
+export const errorLink = onError(({ graphQLErrors, operation, forward }) => {
+  const auth = useAuthStore();
+
+  const unauthenticated = graphQLErrors?.some((e) => e.extensions?.code === "UNAUTHENTICATED");
+
+  if (!unauthenticated) return;
+
+  if (!isRefreshing) {
+    isRefreshing = true;
+
+    return fromPromise(
+      apolloClient
+        .mutate({ mutation: REFRESH_TOKEN_MUTATION })
+        .then((result) => {
+          if (!result?.data) {
+            auth.clear();
+            return;
+          }
+
+          auth.setAuth(result.data.refreshToken.accessToken, result.data.refreshToken.user);
+
+          resolvePendingRequests();
+        })
+        .catch(() => {
+          auth.clear();
+        })
+        .finally(() => {
+          isRefreshing = false;
+        }),
+    ).flatMap(() => forward(operation));
+  }
+
+  return fromPromise(
+    new Promise<void>((resolve) => {
+      pendingRequests.push(resolve);
+    }),
+  ).flatMap(() => forward(operation));
+});

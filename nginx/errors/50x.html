@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html class="h-full" lang="de">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Dienst nicht verfügbar</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @keyframes pulse-slow {
+            0%, 100% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse-slow 3s ease-in-out infinite;
+        }
+    </style>
+</head>
+
+<body class="h-full bg-slate-950 text-slate-200 flex items-center justify-center">
+<div class="relative text-center px-6">
+
+    <!-- Glow -->
+    <div class="absolute inset-0 -z-10 blur-3xl opacity-30">
+        <div class="w-72 h-72 mx-auto rounded-full bg-indigo-500 animate-pulse-slow"></div>
+    </div>
+
+    <h1 class="text-[6rem] font-extrabold text-indigo-400">
+        50x
+    </h1>
+
+    <p class="mt-4 text-lg text-slate-400">
+        Der Dienst ist momentan nicht erreichbar.<br/>
+        Bitte versuche es in wenigen Minuten erneut.
+    </p>
+
+    <div class="mt-8 flex justify-center gap-4">
+        <a
+                class="rounded-xl bg-indigo-500 px-6 py-3 font-semibold text-slate-900
+               shadow-lg shadow-indigo-500/30 transition hover:bg-indigo-400 hover:scale-105"
+                href="/"
+        >
+            Zur Startseite
+        </a>
+
+        <button
+                class="rounded-xl border border-slate-700 px-6 py-3 text-slate-300
+               transition hover:bg-slate-800 hover:scale-105"
+                onclick="location.reload()"
+        >
+            Erneut versuchen
+        </button>
+    </div>
+
+    <p class="mt-10 text-sm text-slate-600">
+        Fehlercode: 502 / 503 / 504
+    </p>
+</div>
+</body>
+</html>
